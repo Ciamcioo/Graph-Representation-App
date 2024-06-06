@@ -220,7 +220,7 @@ void GraphMatrix::dijkstra(int src) const {
  * Additionaly function checks for the negative cycle which might appear in the graph.
  * Finaly function prints the result of the calculation and frees the memory that was needed for it.
  */
-void GraphMatrix::Bellman_ford(int src) const {
+void GraphMatrix::bellman_ford(int src) const {
     int* dist = new int[vertices];
     for (int i = 0; i < vertices; ++i) 
         dist[i] = INT_MAX;
@@ -251,7 +251,9 @@ void GraphMatrix::Bellman_ford(int src) const {
     
     delete [] dist;
 }
-
+bool GraphMatrix::check_if_vertex_exist(int vertex) const  {
+    return (vertex >= 0 && vertex <= vertices) ? true : false;
+}
 
 
 

@@ -33,5 +33,6 @@ class GraphList{
         void dijkstra(int src) const;
         // Belman-Ford Algorithm to find shortest paths from the vertex
         void Bellman_ford(int src) const; 
+        bool check_if_vertex_exist(int vertex) const;
 };
 #endif 

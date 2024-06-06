@@ -246,7 +246,7 @@ void GraphList::dijkstra(int src) const {
  * Additionaly function checks for the negative cycle which might appear in the graph.
  * Finaly function prints the result of the calculation and frees the memory that was needed for it.
  */
-void GraphList::Bellman_ford(int src) const {
+void GraphList::bellman_ford(int src) const {
     int* dist = new int[vertices];
     for (int i = 0; i < vertices; ++i) {
         dist[i] = INT_MAX;
@@ -284,6 +284,9 @@ void GraphList::Bellman_ford(int src) const {
     std::cout << "Vertex Distance from source (calculated with Bellman Ford's algorithm): " << src << std::endl; 
     for (int i = 0; i < vertices; ++i)
         std::cout << i << "\t" <<  dist[i] << std::endl;
+}
+bool GraphList::check_if_vertex_exist(int vertex) const {
+    return (vertex >= 0 && vertex <= vertices)? true : false; 
 }
     
 
