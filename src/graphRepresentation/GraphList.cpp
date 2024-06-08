@@ -156,7 +156,7 @@ void GraphList::prim_mst() const {
     delete [] mst_set;
 }
 
-bool compare_edges(const Edge& e1, const Edge& e2) {
+bool compare_edges_list(const Edge& e1, const Edge& e2) {
     return e1.weight < e2.weight;
 }
 
@@ -177,7 +177,7 @@ void  GraphList::kruskla_mst()  const {
         }
     }
 
-    std::sort(edges, edges + edge_index, compare_edges);
+    std::sort(edges, edges + edge_index, compare_edges_list);
 
     UnionFind uf(vertices);
     Edge* result = new Edge[vertices-1];
