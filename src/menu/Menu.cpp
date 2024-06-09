@@ -2,11 +2,12 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstdio>
+#include <time.h> 
 
 /**
  * Function waits for button press of a user 
  */
-void waitForButtonPress() {
+void wait_for_button_press() {
     std::cout << "Press any key to continue...\n";
     std::cin.ignore();
     std::cin.get();
@@ -15,7 +16,7 @@ void waitForButtonPress() {
 /**
  * Function cleras terminal based on the user operating system
  */
-void clearTerminal() {
+void clear_terminal() {
    #ifdef _WIN32
         system("cls");
    #else
@@ -23,22 +24,31 @@ void clearTerminal() {
    #endif
 }
 
+/// @brief Function generates random integer
+/// @param min - minimum boundery of integer value
+/// @param max - maximum boundery of integer value
+/// @return Function returns random integera value from the specified range
+int get_random_int(int min, int max) {
+    srand(time(NULL));
+    return rand() % (max - min + 1) + min; 
+}
+
 /**
  * Function runs application until the user decides to close the appliaction
  */
-void Menu::menuRunner() {
-   bool shouldRun = true;
+void Menu::menu_runner() {
+   bool should_run = true;
    do {
-      displayMainMenu();
-      shouldRun = mainMenuController(); 
-   } while (shouldRun);
+      display_main_menu();
+      should_run = main_menu_controller(); 
+   } while (should_run);
 }
 
 /**
  * Function displays the options of the main menu
  */
-void Menu::displayMainMenu() const {
-    clearTerminal(); 
+void Menu::display_main_menu() const {
+    clear_terminal(); 
     std::cout << "\nGraph Represenatation Menu\n";
     std::cout << "1. Find minimal spanning tree in graph\n";
     std::cout << "2. Find the shorthest path from source vertex in the graph\n";
@@ -49,21 +59,22 @@ void Menu::displayMainMenu() const {
  * Function controls the flow of the application based on the user input. Function returns true in every case 
  * beside the third case. When third case is inserted application return false.
  */
-bool Menu::mainMenuController() const {
-    int userInput; 
-    bool isValid = true ;
+bool Menu::main_menu_controller() {
+    int user_input; 
+    bool is_valid = true ;
     do {
-        std::cout << "Enter number related to action: ";
-        std::cin >> userInput;
-        switch (userInput) {
+        is_valid = true ;
+        std::cout << "Enter number related to action\n";
+        user_input = get_input();
+        switch (user_input) {
             case 1:{ 
-               displayMSTMenu();
-               mstMenuController();
+               display_mst_menu();
+               mst_menu_controller();
                break;
             }
             case 2:{
-               displaySPMenu();
-               spMenuController();
+               display_sp_menu();
+               sp_menu_controller();
                break; 
             }
             case 3: {
@@ -71,19 +82,19 @@ bool Menu::mainMenuController() const {
             }
             default: {
                 std::cout << "Invalid input" << std::endl;
-                isValid = false;
+                is_valid = false;
                 break;
-             }
+            }
         }
-    }while(!isValid);
+    }while(!is_valid);
     return true;
 }
 
 /**
  * Function displays the minimal spanning tree menu with it's options.
  */
-void Menu::displayMSTMenu() const {
-    clearTerminal();
+void Menu::display_mst_menu() const {
+    clear_terminal();
     std::cout << "\nFind minimal spanning tree submenu\n";
     std::cout << "1. Read graph from file\n";
     std::cout << "2. Generate graph\n";
@@ -96,67 +107,71 @@ void Menu::displayMSTMenu() const {
  * Function controls the user options for minimal spanning tree menu. 
  * Additionaly function is checking if all data necesary for calculations is availabel.
  */
-void Menu::mstMenuController() const {
-    int userInput;
-    bool validInput = true;
+void Menu::mst_menu_controller()  {
+    int user_input;
+    bool is_valid = true;
     do {
-    std::cout << "\nEnter number relate to action: ";
-    std::cin >> userInput;
-        switch(userInput) {
+    is_valid = true;
+    std::cout << "\nEnter number relate to action\n";
+    user_input = get_input();
+        switch(user_input) {
             case 1: {
                 std::cout << "Read from file" << std::endl;
-                waitForButtonPress();
+                wait_for_button_press();
                 break;
             }
             case 2: {
-                std::cout << "Generate random graph" << std::endl;
-                waitForButtonPress();
+                generate_graphs();
+                wait_for_button_press();
                 break; 
             }
             case 3: {
-                if (checkGraphsState())
+                if (check_graph_state())
                     continue;
                 std::cout << "Represenatation of graph in form of a matrix:\n";
-                graphMatrix->print_matrix();  
+                graph_matrix->print_matrix();  
                 std::cout << "Representation of graph in form of a list:\n";
-                graphList->print_list();
+                graph_list->print_list();
+                wait_for_button_press();
                 break;
             }
             case 4: {
-                if (checkGraphsState())
+                if (check_graph_state())
                     continue;
                 std::cout << "Prim's algorithm for both represenationts of graph:\n";
                 std::cout << "Matrix represenatation:\n";
-                graphMatrix->prim_mst();
+                graph_matrix->prim_mst();
                 std::cout << "List represenatation:\n";
-                graphList->prim_mst();
+                graph_list->prim_mst();
+                wait_for_button_press();
                 break;
             }
             case 5: {
-                if (checkGraphsState())
+                if (check_graph_state())
                     continue;
                 std::cout << "Kruskal's algorithm for both represenatation of graph:\n";
                 std::cout << "Matrix represenatation:\n";
-                graphMatrix->kruskla_mst();
+                graph_matrix->kruskla_mst();
                 std::cout << "List represenatation:\n";
-                graphList->kruskla_mst();
+                graph_list->kruskla_mst();
+                wait_for_button_press();
                 break;
             }
             default: {
                 std::cout << "Invalid input\n";
-                waitForButtonPress();
-                validInput = false;
+                wait_for_button_press();
+                is_valid = false;
                 break;
              }
         } 
-    } while(!validInput);
+    } while(!is_valid);
 }
 
 /**
  * Function displays the shorthest path menu with all the options provided to the user.
  */
-void Menu::displaySPMenu() const {
-    clearTerminal();
+void Menu::display_sp_menu() const {
+    clear_terminal();
     std::cout << "\nShothest path from vertex submenu\n";
     std::cout << "1. Read graph from file\n";
     std::cout << "2. Generate graph\n";
@@ -169,81 +184,85 @@ void Menu::displaySPMenu() const {
  * Function controls the options for the shorthest path menu in graph.
  * Additionaly function handles the correctness of data and if all the necesary varialbe are initalized in the program.
  */
-void Menu::spMenuController() const {
-   bool isValid = true;
-   int userInput;
+void Menu::sp_menu_controller() {
+    bool is_valid = true;
+   int user_input;
    do {
-       std::cout << "\nEnter number relate to action: ";
-       std::cin >> userInput; 
+        is_valid = true;
+       std::cout << "\nEnter number relate to action\n";
+       user_input = get_input(); 
 
-       switch (userInput){
+       switch (user_input){
             case 1: {
                 std::cout << "Read from file\n";
-                waitForButtonPress();
+                wait_for_button_press();
                 break;
             }
             case 2: {
-                std::cout << "Generate random graph\n";
-                waitForButtonPress();
+                generate_graphs();
+                wait_for_button_press();
                 break;
             }
             case 3: {
-                if (checkGraphsState())
+                if (check_graph_state())
                     continue;
                 std::cout << "Represenatation of graph in form of a matrix:\n";
-                graphMatrix->print_matrix();  
+                graph_matrix->print_matrix();  
                 std::cout << "Representation of graph in form of a list:\n";
-                graphList->print_list();
+                graph_list->print_list();
+                wait_for_button_press();
                 break;
             }
             case 4: {
-                int sourceVertex= -1; 
-                bool isSourceVeretexValid = true;
-                if (checkGraphsState())
+                int src_vertex= -1; 
+                bool is_src_vertex_valid = true;
+                if (check_graph_state())
                     continue;
 
                 do {
                     std::cout << "Dijkstra's algorithm for both representations:\n";
                     std::cout << "Input the source vertex: ";
-                    std::cin >> sourceVertex; 
-                    isSourceVeretexValid= check_if_vertex_exist(sourceVertex);
-                    if (!isSourceVeretexValid)
-                        clearTerminal();
-                } while(!isSourceVeretexValid);
+                    src_vertex = get_input(); 
+                    is_src_vertex_valid= check_if_vertex_exist(src_vertex);
+                    if (!is_src_vertex_valid)
+                        clear_terminal();
+                } while(!is_src_vertex_valid);
 
                 std::cout << "Matrix representation:\n";
-                graphMatrix->dijkstra(sourceVertex);
+                graph_matrix->dijkstra(src_vertex);
                 std::cout << "List representation:\n";
-                graphList->dijkstra(sourceVertex);
+                graph_list->dijkstra(src_vertex);
+                wait_for_button_press();
                 break;
             }
             case 5: {
-                int sourceVertex = -1;
-                bool isSourceVeretexValid = true;
-                if (checkGraphsState())
+                int src_vertex = -1;
+                bool is_src_vertex_valid = true;
+                if (check_graph_state())
                     continue;
                 do {
                     std::cout << "Ford Bellman's algorithm for both representations:\n";
                     std::cout << "Input the source vertex: ";
-                    isSourceVeretexValid = check_if_vertex_exist(sourceVertex);
-                    if (!isSourceVeretexValid)
-                        clearTerminal();
-                } while(!isSourceVeretexValid);
+                    is_src_vertex_valid = check_if_vertex_exist(src_vertex);
+                    if (!is_src_vertex_valid)
+                        clear_terminal();
+                } while(!is_src_vertex_valid);
 
                 std::cout << "Matrix representation:\n";
-                graphMatrix->bellman_ford(sourceVertex);
+                graph_matrix->bellman_ford(src_vertex);
                 std::cout << "List representation:\n";
-                graphList->bellman_ford(sourceVertex);
+                graph_list->bellman_ford(src_vertex);
+                wait_for_button_press();
                 break;
             }
             default: {
                 std::cout << "Invalid input" << std::endl;
-                waitForButtonPress();
-                isValid = false;
+                wait_for_button_press();
+                is_valid = false;
                 break;
             }
        } 
-   }while(!isValid);
+   }while(!is_valid);
 }
 
 /**
@@ -251,7 +270,7 @@ void Menu::spMenuController() const {
  * Function returns the true if the vertex exists in other case the function return false.
  */
 bool Menu::check_if_vertex_exist(int src_vertex) const  {
-    return (vertexNumber >= 0 && src_vertex <= vertexNumber) ? true : false;
+    return (vertex_number >= 0 && src_vertex <= vertex_number) ? true : false;
 }
 
 /**
@@ -260,11 +279,91 @@ bool Menu::check_if_vertex_exist(int src_vertex) const  {
  * information about needed initalization of graph and returns true.
  * Function ensures the safty of an application.
  */
-bool Menu::checkGraphsState() const  {
-    if (graphList == nullptr || graphMatrix == nullptr) {
+bool Menu::check_graph_state() const  {
+    if (graph_list == nullptr || graph_matrix == nullptr) {
         std::cout << "Initalize graphs before performing calculations\n";
-        waitForButtonPress();
+        wait_for_button_press();
         return true;
     }
     return false;
+}
+
+/**
+ * Function which invokes the graph generation for matrix graph 
+ */
+void Menu::generate_graphs() { 
+    clear_terminal();
+    std::cout << "Provided the number of vertex for graph\n";
+    vertex_number = get_input();
+    std::cout << "Provided the density for graph\n"; 
+    density = get_input();
+    generate_random_matrix_grpah();
+}
+
+/**
+ * Function generates the random graph based on the number of vertecies and density of the graph.
+ * After graph was properly generated, function invokes the copy function.
+*/
+void Menu::generate_random_matrix_grpah() {
+    graph_matrix = new Graph_Matrix(vertex_number);
+    UnionFind uf(vertex_number);
+    
+    for (int i = 1; i < vertex_number; ++i) {
+        int u = get_random_int(0, i -1);
+        int v = i; 
+        int weight = get_random_int(1, 10); 
+        graph_matrix->add_edge(u, v, weight);
+        uf.union_sets(u, v);
+    }
+
+    int total_possible_edges = vertex_number * (vertex_number - 1);
+    int required_edges = total_possible_edges * density / 100;
+    int additional_edges = required_edges - (vertex_number-1);
+
+    while (additional_edges > 0) {
+        int u = get_random_int(0 , vertex_number-1);
+        int v = get_random_int(0, vertex_number-1);
+        int weight = get_random_int(1, 9);
+        if (u != v && !graph_matrix->has_edge(u, v)) {
+            graph_matrix->add_edge(u,v, weight);
+            additional_edges--;
+        }
+    }
+    copy_graph_matrix_to_graph_list();
+}
+
+/**
+ * Function copies the graph matrix to the graph list.
+*/
+void Menu::copy_graph_matrix_to_graph_list() {
+    graph_list = new Graph_List(vertex_number);
+
+    for (int u = 0; u < vertex_number; u++) {
+        for (int v = 0; v < vertex_number; v++) {
+            if (graph_matrix->has_edge(u,v)) {
+                int weight = graph_matrix->get_weight(u, v);
+                graph_list->add_edge(u,v, weight, true);
+            }
+        }
+    }
+}
+
+/**
+ * Function handles the user input. It ensures that the provided input is and number
+*/
+int Menu::get_input() const {
+    bool is_valid = false;
+    int number = -1;
+    do {
+        std::string input;
+        std::cout << "> ";
+        std::cin >> input;
+        try {
+            number = std::stoi(input);
+        } catch(std::exception& e) {
+            std::cerr << "Provided valid input!";
+            is_valid = false;
+        }
+    }while(is_valid);
+    return  number;
 }

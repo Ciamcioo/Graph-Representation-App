@@ -5,41 +5,46 @@
 
 class Menu {
     private:
-        GraphList* graphList;
-        GraphMatrix* graphMatrix;
-        int vertexNumber;
-        int density;
+        Graph_List* graph_list;
+        Graph_Matrix* graph_matrix;
+        int vertex_number = 5;
+        int density = 50;
+        
+        void copy_graph_matrix_to_graph_list();
     public:
 
         // Function invokes the main application implementation
-        void menuRunner();
+        void menu_runner();
 
         // Function displays availabel algorithms in the application
-        void displayMainMenu() const;
+        void display_main_menu() const;
 
         // Function controls the flow of the program based on user input
-        bool mainMenuController() const;
+        bool main_menu_controller();
 
         // Function displays submenu with options for the MST algorithm -> MST - minimal spanning tree
-        void displayMSTMenu() const;
+        void display_mst_menu() const;
 
         // Function controls the flow of the program when user chose the minimal spanning tree option 
-        void mstMenuController() const;
+        void mst_menu_controller();
         
         // Function controls the flow of the program when user chose the shorthest path option 
-        void displaySPMenu() const; 
+        void display_sp_menu() const; 
         
         // Function controls the flow of the program based on user input
-        void spMenuController() const; 
+        void sp_menu_controller(); 
 
         // Function checks if source vertex provided by the user is correct
         bool check_if_vertex_exist(int src_vertex) const;
 
-        // Function displays submenu for graph generation
-        //void displayGraphGenerationMenu() const;
+        // Function handles the process of genearting the graph
+        void generate_graphs();
+        
+        void generate_random_matrix_grpah();
 
         // Function checks if graphs have been initialized
-        bool checkGraphsState() const ;
+        bool check_graph_state() const ;
+        int get_input() const ;
         
 };
 
