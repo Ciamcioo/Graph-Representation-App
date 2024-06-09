@@ -6,6 +6,6 @@ using namespace std;
 int main() {
     Menu* menu;
     menu = new Menu();
-    menu->menuRunner();
+    menu->menu_runner();
     return 0; 
 }

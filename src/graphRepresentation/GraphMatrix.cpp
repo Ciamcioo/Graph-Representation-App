@@ -15,19 +15,21 @@ struct Edge {
  * Construcotor of GraphIM class which as an arguemtn takes the number of verticis 
  * Based on the number of vertices inetrnal matrix is generated with initalization of data
  */
-GraphMatrix::GraphMatrix(int num_vertrics){ 
+Graph_Matrix::Graph_Matrix(int num_vertrics){ 
     vertices = num_vertrics;
     adj_matrix = new int*[vertices];
     for (int i = 0; i < vertices; i++) {
         adj_matrix[i] = new int[vertices];
-        memset(adj_matrix[i], INT_MAX, vertices * sizeof(int));
+        for (int j = 0; j < vertices; j++) {
+            adj_matrix[i][j] = INT_MAX;
+        }
     } 
 }
 
 /**
  * Destrutcotr of the GraphIM class. Release the memory whenever the object is being destroied 
  */
-GraphMatrix::~GraphMatrix() { 
+Graph_Matrix::~Graph_Matrix() { 
     for (int i = 0; i < vertices; i++) 
         delete [] adj_matrix[i];
     delete[] adj_matrix;
@@ -36,7 +38,7 @@ GraphMatrix::~GraphMatrix() {
 /**
  * Function adds the edge representation to the matrix representing the weights and direction of edges.
  */
-void GraphMatrix::add_edge(int u, int v, int weight) {
+void Graph_Matrix::add_edge(int u, int v, int weight) {
    adj_matrix[u][v] = weight;
 
 }
@@ -45,7 +47,7 @@ void GraphMatrix::add_edge(int u, int v, int weight) {
  * Function removes the edge between the vertex passed as the arguments. The function sets cell representing the edge between
  * the vertex to the defaults value.
  */
-void GraphMatrix::remove_edge(int u, int v) {
+void Graph_Matrix::remove_edge(int u, int v) {
    adj_matrix[u][v] = INT_MAX;
 }
 
@@ -53,11 +55,11 @@ void GraphMatrix::remove_edge(int u, int v) {
  * Function prints to the default output stream matrix where cells represent the edges between the vertexs.
  * Edges have weight which is represented as the number in the array cell.
  */
-void GraphMatrix::print_matrix() const {
+void Graph_Matrix::print_matrix() const {
    for (int i = 0; i < vertices; i++) {
         for (int j = 0; j < vertices; j++){
-            if (adj_matrix[i][j] == INT_MAX) {
-                std::cout << "INF";
+            if (adj_matrix[i][j] ==  INT_MAX) {
+                std::cout << "0 ";
             } 
             else {
                 std::cout << adj_matrix[i][j] << " ";
@@ -98,7 +100,7 @@ void print_mst(int* parent,int vertices, int** adj_matrix) {
  * checks for the smallest value of neighbour edge and moves to the next vertex.
  * At the end it invokes function which prints and free the memeory which have been used allocated for components of algorithm.
  */
-void GraphMatrix::prim_mst() const {
+void Graph_Matrix::prim_mst() const {
     int* parent = new int[vertices];    
     int* key = new int[vertices];
     bool* mst_set = new bool[vertices];
@@ -137,7 +139,7 @@ bool compare_edges(const Edge& e1, const Edge& e2) {
  * Function creates the minimal spaning tree based on the Kruskal's algorithm. Firstly function fills the edge array with the data and sorts it. 
  * Edges are sorted in increamanting way. Then the edges are added to the union_set which will be merged with other to created minimal spaning tree.
  */
-void GraphMatrix::kruskla_mst() const {
+void Graph_Matrix::kruskla_mst() const {
     Edge* edges = new Edge[vertices * vertices];
     int edge_count = 0;
 
@@ -182,7 +184,7 @@ void GraphMatrix::kruskla_mst() const {
  * After function calculates the shortest way it displaies it onto the screen.
  * At the very end function frees the memory used for calculations.
  */
-void GraphMatrix::dijkstra(int src) const {
+void Graph_Matrix::dijkstra(int src) const {
     int* dist = new int[vertices];
     bool* sptSet = new bool[vertices];
       
@@ -220,7 +222,7 @@ void GraphMatrix::dijkstra(int src) const {
  * Additionaly function checks for the negative cycle which might appear in the graph.
  * Finaly function prints the result of the calculation and frees the memory that was needed for it.
  */
-void GraphMatrix::bellman_ford(int src) const {
+void Graph_Matrix::bellman_ford(int src) const {
     int* dist = new int[vertices];
     for (int i = 0; i < vertices; ++i) 
         dist[i] = INT_MAX;
@@ -251,8 +253,30 @@ void GraphMatrix::bellman_ford(int src) const {
     
     delete [] dist;
 }
-bool GraphMatrix::check_if_vertex_exist(int vertex) const  {
+
+/// @brief Function checks if specified vertex exists
+/// @param vertex - number of vertex to check 
+/// @return Function rutunrs true if vertex exists in other case returns false
+bool Graph_Matrix::check_if_vertex_exist(int vertex) const  {
     return (vertex >= 0 && vertex <= vertices) ? true : false;
+}
+
+/// @brief Function checks if edge exists in graph
+/// @param u - vertex where edge begins
+/// @param v - vertex where edge ends 
+/// @return Function returns true if egde exists in other case reutnrs false
+bool Graph_Matrix::has_edge(int u, int v) const {
+    if ( u >=0 && u < vertices && v >= 0 && v < vertices)
+        return adj_matrix[u][v] != INT_MAX;
+    return false;
+}
+
+/// @brief Function returns the weight of a edge
+/// @param u  - vertex where edge begins
+/// @param v  - vertex where edge ends
+/// @return Function returns integera value representing weight of an edge
+int Graph_Matrix::get_weight(int u, int v) const {
+    return adj_matrix[u][v];
 }
 
 

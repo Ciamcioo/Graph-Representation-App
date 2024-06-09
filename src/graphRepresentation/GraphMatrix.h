@@ -1,15 +1,16 @@
 #ifndef GRAPHMATRIX_H
 #define GRAPHMATRIX_H
 #include "../algorithmAdditionalElements/UnionFind.h"
-class GraphMatrix {
+#include <limits>
+class Graph_Matrix {
     private:
        int vertices;
        int** adj_matrix;
     public:
         // Constructor 
-        GraphMatrix(int num_vertrics);
+        Graph_Matrix(int num_vertrics);
         // Destructor
-        ~GraphMatrix();
+        ~Graph_Matrix();
         // Add edge
         void add_edge(int u, int v, int weight);
         // Remove edge
@@ -24,8 +25,12 @@ class GraphMatrix {
         void dijkstra(int src) const;
         // Belman-Ford Algorithm to find shortest paths from the vertex
         void bellman_ford(int src) const; 
+        // Function checks if vertex exists
         bool check_if_vertex_exist(int vertex) const;
-        
+        // Function checks if an edge exists
+        bool has_edge(int u, int v) const;
+        // Function returns teh weight of an edge
+        int get_weight(int u, int v) const;
 };
 
 #endif

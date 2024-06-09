@@ -1,7 +1,9 @@
 #ifndef GRAPHLIST_H
 #define GRAPHLIST_H
 #include "../algorithmAdditionalElements/UnionFind.h"
-class GraphList{
+#include <limits>
+
+class Graph_List{
     private:
         struct Node {
             int vertex;
@@ -16,9 +18,9 @@ class GraphList{
 
     public:
         // Constructor
-        GraphList(int num_vertices);
+        Graph_List(int num_vertices);
         // Destructor
-        ~GraphList();
+        ~Graph_List();
         // Add edge
         void add_edge(int u, int v, int weight, bool directed);
         // Remove edge
