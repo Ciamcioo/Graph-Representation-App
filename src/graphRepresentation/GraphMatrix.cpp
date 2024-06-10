@@ -106,19 +106,6 @@ void print_mst(int* parent,int vertices, int* key ) {
  */
 double Graph_Matrix::prim_mst() const {
     struct timespec start, end;
-    Graph_Matrix* gm = new Graph_Matrix(vertices);
-    print_matrix();
-    std::cout << std::endl;
-    for (int u = 0; u < vertices; u++) {
-        for (int v = u; v < vertices; v++) {
-            if (adj_matrix[u][v] >= adj_matrix[v][u])
-                gm->add_edge(u, v, adj_matrix[v][u]);
-            else
-                gm->add_edge(u, v, adj_matrix[u][v]);
-        }
-    }
-    gm->print_matrix();
-
     int* parent = new int[vertices]; 
     int* key = new int[vertices];    
     bool* mst_set = new bool[vertices]; 
@@ -137,9 +124,9 @@ double Graph_Matrix::prim_mst() const {
         int u = min_key(key, mst_set, vertices);
         mst_set[u] = true;
         for (int v = 0; v < vertices; v++) {
-            if (gm->get_weight(u,v) && !mst_set[v] && gm->get_weight(u,v) < key[v]){
+            if (adj_matrix[u][v] != INT_MAX && !mst_set[v] && adj_matrix[u][v] < key[v]){
                 parent[v] = u; 
-                key[v] = gm->get_weight(u,v);
+                key[v] = adj_matrix[u][v];
             }
         }
     }
@@ -301,15 +288,15 @@ double Graph_Matrix::bellman_ford(int src) const {
 }
 
 /// @brief Function checks if specified vertex exists
-/// @param vertex - number of vertex to check 
+/// @param vertex  number of vertex to check 
 /// @return Function rutunrs true if vertex exists in other case returns false
 bool Graph_Matrix::check_if_vertex_exist(int vertex) const  {
     return (vertex >= 0 && vertex <= vertices) ? true : false;
 }
 
 /// @brief Function checks if edge exists in graph
-/// @param u - vertex where edge begins
-/// @param v - vertex where edge ends 
+/// @param u vertex where edge begins
+/// @param v vertex where edge ends 
 /// @return Function returns true if egde exists in other case reutnrs false
 bool Graph_Matrix::has_edge(int u, int v) const {
     if ( u >=0 && u < vertices && v >= 0 && v < vertices)
@@ -318,8 +305,8 @@ bool Graph_Matrix::has_edge(int u, int v) const {
 }
 
 /// @brief Function returns the weight of a edge
-/// @param u  - vertex where edge begins
-/// @param v  - vertex where edge ends
+/// @param u vertex where edge begins
+/// @param v vertex where edge ends
 /// @return Function returns integera value representing weight of an edge
 int Graph_Matrix::get_weight(int u, int v) const {
     return adj_matrix[u][v];

@@ -3,6 +3,51 @@
 #include <cstdlib>
 #include <cstdio>
 #include <time.h> 
+#include <fstream>
+
+void Menu::generate_graph_from_file_mst(std::string file_name) {
+    std::ifstream file(file_name);
+
+    if (!file.is_open()) {
+        std::cout << "Something went wrong with opening the file\n";
+        return;
+    }
+
+    int edges_number, vertecies_number;
+    file >> edges_number >> vertecies_number;
+
+    graph_matrix = new Graph_Matrix(vertecies_number);
+    graph_list = new Graph_List(vertecies_number);
+    
+    int u, v, weight;
+    while (file >> u >> v >> weight) {
+        graph_matrix->add_edge(u,v, weight);
+        graph_list->add_edge(u,v,weight,false);
+    }
+    file.close();
+}
+
+void Menu::generate_graph_from_file_sp(std::string file_name) {
+    std::ifstream file(file_name);
+
+    if (!file.is_open()) {
+        std::cout << "Something went wrong with opening the file\n";
+        return;
+    }
+
+    int edges_number, vertecies_number;
+    file >> edges_number >> vertecies_number; 
+
+    graph_matrix = new Graph_Matrix(vertecies_number);
+    graph_list = new Graph_List(vertecies_number);
+
+    int u, v, weight;
+    while (file >> u >> v >> weight) {
+        graph_matrix->add_edge(u,v,weight);
+        graph_list->add_edge(u,v,weight,true);
+    }
+    file.close();
+}
 
 /**
  * Function waits for button press of a user 
@@ -118,13 +163,13 @@ void Menu::mst_menu_controller()  {
             case 1: {
                 std::string file_name;
                 std::cout << "Provide file name:";
-                cin >> file_name;
-                generate_graph_from_file(file_name);
+                std::cin >> file_name;
+                generate_graph_from_file_mst(file_name);
                 wait_for_button_press();
                 break;
             }
             case 2: {
-                generate_graphs();
+                generate_graphs_mst();
                 wait_for_button_press();
                 break; 
             }
@@ -206,12 +251,15 @@ void Menu::sp_menu_controller() {
 
        switch (user_input){
             case 1: {
-                std::cout << "Read from file\n";
+                std::string file_name;
+                std::cout << "Provide file name:";
+                std::cin >> file_name;
+                generate_graph_from_file_sp(file_name);
                 wait_for_button_press();
                 break;
             }
             case 2: {
-                generate_graphs();
+                generate_graphs_sp();
                 wait_for_button_press();
                 break;
             }
@@ -312,20 +360,31 @@ bool Menu::check_graph_state() const  {
 /**
  * Function which invokes the graph generation for matrix graph 
  */
-void Menu::generate_graphs() { 
+void Menu::generate_graphs_mst() { 
     clear_terminal();
+    std::cout << "Right now you are generating the graph for minimal spanning tree problem!\n";
     std::cout << "Provided the number of vertex for graph\n";
     vertex_number = get_input();
     std::cout << "Provided the density for graph\n"; 
     density = get_input();
-    generate_random_matrix_grpah();
+    generate_random_matrix_graph(false);
+}
+
+void Menu::generate_graphs_sp() { 
+    clear_terminal();
+    std::cout << "Right now you are generating the graph for shorthes path problem!\n";
+    std::cout << "Provided the number of vertex for graph\n";
+    vertex_number = get_input();
+    std::cout << "Provided the density for graph\n"; 
+    density = get_input();
+    generate_random_matrix_graph(true);
 }
 
 /**
  * Function generates the random graph based on the number of vertecies and density of the graph.
  * After graph was properly generated, function invokes the copy function.
 */
-void Menu::generate_random_matrix_grpah() {
+void Menu::generate_random_matrix_graph(bool is_directed) {
     graph_matrix = new Graph_Matrix(vertex_number);
     UnionFind uf(vertex_number);
     
@@ -334,10 +393,15 @@ void Menu::generate_random_matrix_grpah() {
         int v = i; 
         int weight = get_random_int(1, 9); 
         graph_matrix->add_edge(u, v, weight);
+        if (!is_directed) 
+            graph_matrix->add_edge(v,u, weight);
         uf.union_sets(u, v);
     }
-
-    int total_possible_edges = vertex_number * (vertex_number - 1);
+    int total_possible_edges;
+    if (is_directed)
+        total_possible_edges = vertex_number * (vertex_number - 1);
+    else
+        total_possible_edges = vertex_number * (vertex_number - 1) / 2;
     int required_edges = total_possible_edges * density / 100;
     int additional_edges = required_edges - (vertex_number-1);
 
@@ -347,38 +411,28 @@ void Menu::generate_random_matrix_grpah() {
         int weight = get_random_int(1, 9);
         if (u != v && !graph_matrix->has_edge(u, v)) {
             graph_matrix->add_edge(u,v, weight);
+            if (!is_directed)
+                graph_matrix->add_edge(v,u,weight);
             additional_edges--;
         }
     }
-    copy_graph_matrix_to_graph_list();
+
+    copy_graph_matrix_to_graph_list(is_directed);
 }
+
 
 /**
  * Function copies the graph matrix to the graph list.
 */
-void Menu::copy_graph_matrix_to_graph_list() {
+void Menu::copy_graph_matrix_to_graph_list(bool is_directed) {
     graph_list = new Graph_List(vertex_number);
     copy_graph_list = new Graph_List(vertex_number);
 
     for (int u = 0; u < vertex_number; u++) {
-        for (int v = 0; v < vertex_number; v++) {
+        for (int v = is_directed ? 0 : u; v < vertex_number; v++) {
             if (graph_matrix->has_edge(u,v)) {
                 int weight = graph_matrix->get_weight(u, v);
-                graph_list->add_edge(u,v, weight, true);
-            }
-        }
-    }
-    for (int u = 0; u < vertex_number; u++) {
-        for (int v = u; v < vertex_number; v++) {
-            if(graph_matrix->has_edge(u,v)) {
-                if (graph_matrix->get_smaller_edge(u,v)) {
-                    int weight =  graph_matrix->get_weight(v,u);
-                    copy_graph_list->add_edge(v, u, weight, false);
-                }
-                else {
-                    int weight =  graph_matrix->get_weight(u, v);
-                    copy_graph_list->add_edge(u, v, weight, false);
-                }
+                graph_list->add_edge(u,v, weight, is_directed);
             }
         }
     }

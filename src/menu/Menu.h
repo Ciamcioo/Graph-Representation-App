@@ -2,6 +2,7 @@
 #define MENU
 #include "../graphRepresentation/GraphList.h"
 #include "../graphRepresentation/GraphMatrix.h"
+#include <iostream>
 
 class Menu {
     private:
@@ -11,7 +12,8 @@ class Menu {
         int vertex_number = 5;
         int density = 50;
         
-        void copy_graph_matrix_to_graph_list();
+        void generate_random_matrix_graph(bool is_directed);
+        void copy_graph_matrix_to_graph_list(bool is_directed);
     public:
 
         // Function invokes the main application implementation
@@ -39,9 +41,11 @@ class Menu {
         bool check_if_vertex_exist(int src_vertex) const;
 
         // Function handles the process of genearting the graph
-        void generate_graphs();
+        void generate_graphs_mst();
+        void generate_graphs_sp();
         
-        void generate_random_matrix_grpah();
+        void generate_graph_from_file_mst(std::string file_name);
+        void generate_graph_from_file_sp(std::string file_name); 
 
         // Function checks if graphs have been initialized
         bool check_graph_state() const ;

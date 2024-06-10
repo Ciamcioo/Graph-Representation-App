@@ -128,7 +128,6 @@ void Graph_List::print_mst(int* parent) const {
  */
 double Graph_List::prim_mst() const {
     struct timespec start, end;
-    print_list();
     int* parent = new int[vertices];
     int* key = new int[vertices];
     bool* mst_set = new bool[vertices];
