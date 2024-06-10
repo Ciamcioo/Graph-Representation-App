@@ -28,13 +28,13 @@ class Graph_List{
         // Print list
         void print_list() const; 
         // Prim's Algorithm to find MST
-        void prim_mst() const;
+        double prim_mst() const;
         //  Kruskla's Algorithm to find MST
-        void kruskla_mst() const;
+        double kruskla_mst() const;
         // Dijkstra's algorithm to find shortest paths from the vertex
-        void dijkstra(int src) const;
+        double dijkstra(int src) const;
         // Belman-Ford Algorithm to find shortest paths from the vertex
-        void bellman_ford(int src) const; 
+        double bellman_ford(int src) const; 
         bool check_if_vertex_exist(int vertex) const;
 };
 #endif 

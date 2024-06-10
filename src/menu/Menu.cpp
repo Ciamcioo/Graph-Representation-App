@@ -116,7 +116,10 @@ void Menu::mst_menu_controller()  {
     user_input = get_input();
         switch(user_input) {
             case 1: {
-                std::cout << "Read from file" << std::endl;
+                std::string file_name;
+                std::cout << "Provide file name:";
+                cin >> file_name;
+                generate_graph_from_file(file_name);
                 wait_for_button_press();
                 break;
             }
@@ -140,9 +143,13 @@ void Menu::mst_menu_controller()  {
                     continue;
                 std::cout << "Prim's algorithm for both represenationts of graph:\n";
                 std::cout << "Matrix represenatation:\n";
-                graph_matrix->prim_mst();
+                double result_matrix = graph_matrix->prim_mst();
+                std::cout << "Matrix graph time result: " << result_matrix << " ms\n"; 
+
                 std::cout << "List represenatation:\n";
-                copy_graph_list->prim_mst();
+                double result_list = graph_list->prim_mst();
+                std::cout << "List graph time result: " << result_list << " ms\n";
+
                 wait_for_button_press();
                 break;
             }
@@ -150,10 +157,15 @@ void Menu::mst_menu_controller()  {
                 if (check_graph_state())
                     continue;
                 std::cout << "Kruskal's algorithm for both represenatation of graph:\n";
+
                 std::cout << "Matrix represenatation:\n";
-                graph_matrix->kruskla_mst();
+                double result_matrix = graph_matrix->kruskla_mst();
+                std::cout << "Matrix graph time result: " << result_matrix << " ms\n";
+
                 std::cout << "List represenatation:\n";
-                graph_list->kruskla_mst();
+                double result_list = graph_list->kruskla_mst();
+                std::cout << "Matrix graph time result: " << result_list  << " ms\n";
+
                 wait_for_button_press();
                 break;
             }
@@ -229,9 +241,13 @@ void Menu::sp_menu_controller() {
                 } while(!is_src_vertex_valid);
 
                 std::cout << "Matrix representation:\n";
-                graph_matrix->dijkstra(src_vertex);
+                double result_matrix = graph_matrix->dijkstra(src_vertex);
+                std::cout << "Matrix graph time result: " << result_matrix << " ms\n";
+
                 std::cout << "List representation:\n";
-                graph_list->dijkstra(src_vertex);
+                double result_list = graph_list->dijkstra(src_vertex);
+                std::cout << "List graph time result: " << result_list << " ms\n";
+
                 wait_for_button_press();
                 break;
             }
@@ -250,9 +266,13 @@ void Menu::sp_menu_controller() {
                 } while(!is_src_vertex_valid);
 
                 std::cout << "Matrix representation:\n";
-                graph_matrix->bellman_ford(src_vertex);
+                double result_matrix = graph_matrix->bellman_ford(src_vertex);
+                std::cout << "Matrix graph time result: " << result_matrix << " ms\n";
+
                 std::cout << "List representation:\n";
-                graph_list->bellman_ford(src_vertex);
+                double result_list = graph_list->bellman_ford(src_vertex);
+                std::cout << "List graph time result: " << result_list << " ms\n";
+
                 wait_for_button_press();
                 break;
             }

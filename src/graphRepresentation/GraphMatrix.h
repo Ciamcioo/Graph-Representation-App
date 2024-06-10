@@ -18,13 +18,13 @@ class Graph_Matrix {
         // Print list
         void print_matrix() const; 
         // Prim's Algorithm to find MST
-        void prim_mst() const;
+        double prim_mst() const;
         //  Kruskla's Algorithm to find MST
-        void kruskla_mst() const;
+        double kruskla_mst() const;
         // Dijkstra's algorithm to find shortest paths from the vertex
-        void dijkstra(int src) const;
+        double dijkstra(int src) const;
         // Belman-Ford Algorithm to find shortest paths from the vertex
-        void bellman_ford(int src) const; 
+        double bellman_ford(int src) const; 
         // Function checks if vertex exists
         bool check_if_vertex_exist(int vertex) const;
         // Function checks if an edge exists

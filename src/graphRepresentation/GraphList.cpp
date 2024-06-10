@@ -120,24 +120,27 @@ void Graph_List::print_mst(int* parent) const {
     }
     
 }
+
 /**
  * Function implemnts the prim's algorithm to find minimal spining tree for the graph.
  * Allocates additional memory to store the mst and release it as soon as its finish it workes.
  * After establish the minimal spining tree function prints to the default stream the result of its work.
  */
-void Graph_List::prim_mst() const {
+double Graph_List::prim_mst() const {
+    struct timespec start, end;
     print_list();
     int* parent = new int[vertices];
     int* key = new int[vertices];
     bool* mst_set = new bool[vertices];
     
+    clock_gettime(CLOCK_MONOTONIC, &start);
     for (int i = 0; i < vertices; i++) 
         key[i] = INT_MAX, mst_set[i] = false;
     
     key[0] = 0;
     parent[0] = -1;
 
- for (int i = 0; i < vertices; i++) {
+    for (int i = 0; i < vertices; i++) {
         int u = min_key(key, mst_set);
         mst_set[u] = true;
 
@@ -152,12 +155,15 @@ void Graph_List::prim_mst() const {
             currentNode = currentNode->next;
         }
     }
-    
+    clock_gettime(CLOCK_MONOTONIC, &end); 
+    double elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec);
+
     print_mst(parent);
     
     delete [] parent;
     delete [] key;
     delete [] mst_set;
+    return elapsed_time;
 }
 
 bool compare_edges_list(const Edge& e1, const Edge& e2) {
@@ -170,9 +176,11 @@ bool compare_edges_list(const Edge& e1, const Edge& e2) {
  * After function calculates the shortest way it displaies it onto the screen.
  * At the very end function frees the memory used for calculations.
  */
-void  Graph_List::kruskla_mst()  const {
+double Graph_List::kruskla_mst()  const {
+    struct timespec start, end;
     Edge* edges = new Edge[vertices*vertices];
     int edge_index = 0;  
+    clock_gettime(CLOCK_MONOTONIC, &start);
     for (int i = 0; i< vertices; ++i) {
         Node* node = adj_list[i];
         while (node) {
@@ -196,6 +204,8 @@ void  Graph_List::kruskla_mst()  const {
             uf.union_sets(src_root, dest_root);
         }
     }
+    clock_gettime(CLOCK_MONOTONIC, &end); 
+    double elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec);
 
     std::cout << "Minimum Spanning Tree (Kruskal's Algorithm):\n";
     std::cout << "Edge \t Weight\n";
@@ -204,12 +214,15 @@ void  Graph_List::kruskla_mst()  const {
 
     delete [] edges;
     delete [] result;
+    return elapsed_time;
 }
 
-void Graph_List::dijkstra(int src) const { 
+double Graph_List::dijkstra(int src) const { 
     int* dist = new int[vertices];
     bool* sptSet = new bool[vertices];
+    struct timespec start, end;
 
+    clock_gettime(CLOCK_MONOTONIC, &start);
     for (int i = 0; i < vertices; ++i) {
         dist[i] = INT_MAX;
         sptSet[i] = false;
@@ -235,6 +248,8 @@ void Graph_List::dijkstra(int src) const {
             node = node->next;
         }
     }
+    clock_gettime(CLOCK_MONOTONIC, &end); 
+    double elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec);
 
 
     std::cout << "Vertex Distance from Source (calculated with dijkstra's algorithm):  " << src << "\n";
@@ -243,6 +258,7 @@ void Graph_List::dijkstra(int src) const {
     
     delete [] dist;
     delete [] sptSet;
+    return elapsed_time; 
 }
 
 /**
@@ -251,8 +267,11 @@ void Graph_List::dijkstra(int src) const {
  * Additionaly function checks for the negative cycle which might appear in the graph.
  * Finaly function prints the result of the calculation and frees the memory that was needed for it.
  */
-void Graph_List::bellman_ford(int src) const {
+double Graph_List::bellman_ford(int src) const {
     int* dist = new int[vertices];
+    struct timespec start, end;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
     for (int i = 0; i < vertices; ++i) {
         dist[i] = INT_MAX;
     }
@@ -280,15 +299,20 @@ void Graph_List::bellman_ford(int src) const {
             if (dist[u] != INT_MAX && dist[u] + weight < dist[v]) {
                 std::cout<< "Graph contains negative weight cycle" << std::endl;
                 delete[] dist;
-                return;
+                break;
             }
             node = node->next;
         }
     }
+    clock_gettime(CLOCK_MONOTONIC, &end); 
+    double elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec);
+    
     
     std::cout << "Vertex Distance from source (calculated with Bellman Ford's algorithm): " << src << std::endl; 
     for (int i = 0; i < vertices; ++i)
         std::cout << i << "\t" <<  dist[i] << std::endl;
+    
+    return elapsed_time;
 }
 bool Graph_List::check_if_vertex_exist(int vertex) const {
     return (vertex >= 0 && vertex <= vertices)? true : false; 

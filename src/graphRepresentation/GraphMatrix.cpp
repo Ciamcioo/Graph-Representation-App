@@ -104,7 +104,7 @@ void print_mst(int* parent,int vertices, int* key ) {
  * checks for the smallest value of neighbour edge and moves to the next vertex.
  * At the end it invokes function which prints and free the memeory which have been used allocated for components of algorithm.
  */
-void Graph_Matrix::prim_mst() const {
+double Graph_Matrix::prim_mst() const {
     struct timespec start, end;
     Graph_Matrix* gm = new Graph_Matrix(vertices);
     print_matrix();
@@ -118,12 +118,12 @@ void Graph_Matrix::prim_mst() const {
         }
     }
     gm->print_matrix();
-    
+
     int* parent = new int[vertices]; 
     int* key = new int[vertices];    
     bool* mst_set = new bool[vertices]; 
 
-    
+    clock_gettime(CLOCK_MONOTONIC, &start); 
     for (int i = 0; i < vertices; i++) {
         key[i] = INT_MAX; 
         mst_set[i] = false;
@@ -143,12 +143,16 @@ void Graph_Matrix::prim_mst() const {
             }
         }
     }
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    double elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec);
 
     print_mst(parent, vertices, key);
 
     delete[] parent;
     delete[] key;
     delete[] mst_set;
+
+    return elapsed_time;
 }
 
 /**
@@ -162,10 +166,13 @@ bool compare_edges(const Edge& e1, const Edge& e2) {
  * Function creates the minimal spaning tree based on the Kruskal's algorithm. Firstly function fills the edge array with the data and sorts it. 
  * Edges are sorted in increamanting way. Then the edges are added to the union_set which will be merged with other to created minimal spaning tree.
  */
-void Graph_Matrix::kruskla_mst() const {
+double Graph_Matrix::kruskla_mst() const {
+    struct timespec start, end;
     Edge* edges = new Edge[vertices * vertices];
     int edge_count = 0;
 
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
     for (int i = 0; i < vertices; ++i) {
         for (int j = 0; j < vertices; ++j) {
             if (adj_matrix[i][j] != INT_MAX) {
@@ -192,6 +199,8 @@ void Graph_Matrix::kruskla_mst() const {
             uf.union_sets(set_u, set_v);
         }
     }
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    double elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec);
 
     // Prints the result of kruskal's mst algorithm
     std::cout << "Following are the edges n the constructed MST:\n";
@@ -200,6 +209,7 @@ void Graph_Matrix::kruskla_mst() const {
        std::cout << result[i].src << " -> " << result[i].dest << " \t " << result[i].weight << "\n"; 
     delete [] edges;
     delete [] result;
+    return elapsed_time;
 }
 
 /**
@@ -208,10 +218,12 @@ void Graph_Matrix::kruskla_mst() const {
  * After function calculates the shortest way it displaies it onto the screen.
  * At the very end function frees the memory used for calculations.
  */
-void Graph_Matrix::dijkstra(int src) const {
+double Graph_Matrix::dijkstra(int src) const {
+    struct timespec start, end;
     int* dist = new int[vertices];
     bool* sptSet = new bool[vertices];
       
+    clock_gettime(CLOCK_MONOTONIC, &start);
     for (int i = 0; i < vertices; ++i) {
         dist[i] = INT_MAX;
         sptSet[i] = false;
@@ -233,12 +245,16 @@ void Graph_Matrix::dijkstra(int src) const {
         if (!sptSet[v] && adj_matrix[u][v] != INT_MAX && dist[u] != INT_MAX && dist[u] + adj_matrix[u][v] < dist[v])
             dist[v] = dist[u] + adj_matrix[u][v];
     }
-    std::cout << "Vertex Distance from Source " << src << "\n";
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    double elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec);
+
+    std::cout << "Vertex distance from Source " << src << "\n";
     for (int i = 0; i < vertices; ++i) 
         std::cout << i << "\t" << dist[i] << "\n";
 
     delete [] dist;
     delete [] sptSet;
+    return elapsed_time;
 }
 /**
  * Function implements the Bellman Ford's algorithm to find the shortest path to every single vertex from source vertex.
@@ -246,8 +262,11 @@ void Graph_Matrix::dijkstra(int src) const {
  * Additionaly function checks for the negative cycle which might appear in the graph.
  * Finaly function prints the result of the calculation and frees the memory that was needed for it.
  */
-void Graph_Matrix::bellman_ford(int src) const {
+double Graph_Matrix::bellman_ford(int src) const {  
+    struct timespec start, end;
     int* dist = new int[vertices];
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
     for (int i = 0; i < vertices; ++i) 
         dist[i] = INT_MAX;
     dist[src] = 0;
@@ -266,16 +285,19 @@ void Graph_Matrix::bellman_ford(int src) const {
             if (adj_matrix[u][v] != INT_MAX && dist[u] != INT_MAX && dist[u] + adj_matrix[u][v] < dist[v]) {
                 std::cout << "Graph contains negative weight cycle" << std::endl; 
                 delete [] dist;
-                return;
+                break;
             }
         }
     }
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    double elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec);
     
     std::cout << "Vertex Distance from source (calculated with Bellman Ford's algorithm): " << src << std::endl;
     for (int i = 0; i < vertices; i++)
         std::cout << i << "\t" << dist[i] << std::endl;
     
     delete [] dist;
+    return elapsed_time;
 }
 
 /// @brief Function checks if specified vertex exists
