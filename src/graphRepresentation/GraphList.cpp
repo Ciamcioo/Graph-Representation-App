@@ -3,6 +3,7 @@
 #include <climits>
 #include <algorithm>
 #include <cstring>
+#include <ctime>
 
 struct Edge {
     int src, dest, weight;
@@ -94,9 +95,11 @@ void Graph_List::print_list() const {
  */
 int Graph_List::min_key(int* key, bool* mst_set) const  {
     int min = INT_MAX, min_index;
+
     for (int v = 0; v < vertices; v++) {
-        if (!mst_set[v] && key[v] < min)
+        if (!mst_set[v] && key[v] < min) {
             min = key[v], min_index = v;
+        }
     }
     return min_index;
 }
@@ -123,6 +126,7 @@ void Graph_List::print_mst(int* parent) const {
  * After establish the minimal spining tree function prints to the default stream the result of its work.
  */
 void Graph_List::prim_mst() const {
+    print_list();
     int* parent = new int[vertices];
     int* key = new int[vertices];
     bool* mst_set = new bool[vertices];
@@ -133,21 +137,21 @@ void Graph_List::prim_mst() const {
     key[0] = 0;
     parent[0] = -1;
 
-    for (int i = 0; i < vertices; i++) {
-        int u = min_key(key, mst_set); 
-        mst_set[u] = true; 
+ for (int i = 0; i < vertices; i++) {
+        int u = min_key(key, mst_set);
+        mst_set[u] = true;
 
-        for (int v = 0; v <vertices; v++) {
-            Node* currentNode = adj_list[u];
-            while (currentNode != nullptr) {
-                if (currentNode->vertex == v && currentNode->weight < key[v] && !mst_set[v]) {
-                    parent[v] = u;
-                    key[v] = currentNode->weight;
-                }
-                currentNode = currentNode->next;
+        Node* currentNode = adj_list[u];
+        while (currentNode != nullptr) {
+            int v = currentNode->vertex;
+            int weight = currentNode->weight;
+            if (!mst_set[v] && weight < key[v]) {
+                parent[v] = u;
+                key[v] = weight;
             }
-        } 
-    }   
+            currentNode = currentNode->next;
+        }
+    }
     
     print_mst(parent);
     
@@ -194,8 +198,9 @@ void  Graph_List::kruskla_mst()  const {
     }
 
     std::cout << "Minimum Spanning Tree (Kruskal's Algorithm):\n";
-    for (int i = 0; i < edge_index; i++) 
-        std::cout << result[i].src << " -- " << result[i].dest << " == " << result[i].weight;
+    std::cout << "Edge \t Weight\n";
+    for (int i = 0; i < edge_index  && i < vertices-1; i++) 
+        std::cout << result[i].src << " -> " << result[i].dest << " \t " << result[i].weight << "\n";
 
     delete [] edges;
     delete [] result;

@@ -31,6 +31,8 @@ class Graph_Matrix {
         bool has_edge(int u, int v) const;
         // Function returns teh weight of an edge
         int get_weight(int u, int v) const;
+        int** get_adj_matrix() const;
+        bool get_smaller_edge(int u, int v) const;
 };
 
 #endif

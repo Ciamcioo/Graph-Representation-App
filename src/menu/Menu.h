@@ -6,6 +6,7 @@
 class Menu {
     private:
         Graph_List* graph_list;
+        Graph_List* copy_graph_list;
         Graph_Matrix* graph_matrix;
         int vertex_number = 5;
         int density = 50;

@@ -3,6 +3,7 @@
 #include <cstring>
 #include <climits>
 #include <algorithm>
+#include <ctime>
 
 /**
  * Aditional structure for Kruskal's algorithm of minimal spaning tree which represents the edge of the graph
@@ -74,21 +75,24 @@ void Graph_Matrix::print_matrix() const {
  */
 int min_key(int* key, bool* mst_set, int vertices) {
     int min = INT_MAX, min_index;
-    for (int v = 0; v < vertices; v++) {
-       if (!mst_set[v] && key[v] < min)
-           min = key[v], min_index = v;
-    }
-    return min_index; 
+
+    for (int v = 0; v < vertices; v++)
+        if (!mst_set[v] && key[v] < min){
+            min = key[v]; 
+            min_index = v;
+        }
+
+    return min_index;
 }
 
 /**
  * Prints the minimum spinning tree which was created
  */
-void print_mst(int* parent,int vertices, int** adj_matrix) {
+void print_mst(int* parent,int vertices, int* key ) {
     std::cout << "Edge \tWeight\n";
     for (int i = 1; i< vertices; i++) {
-        if(adj_matrix[i][parent[i]] != INT_MAX) {
-            std::cout << parent[i] << " - " << i << " \t" << adj_matrix[i][parent[i]] << std::endl;
+        if(key[i] != INT_MAX) {
+            std::cout << parent[i] << " - " << i << " \t" << key[i]  << std::endl;
         }
    } 
 }
@@ -101,31 +105,50 @@ void print_mst(int* parent,int vertices, int** adj_matrix) {
  * At the end it invokes function which prints and free the memeory which have been used allocated for components of algorithm.
  */
 void Graph_Matrix::prim_mst() const {
-    int* parent = new int[vertices];    
-    int* key = new int[vertices];
-    bool* mst_set = new bool[vertices];
+    struct timespec start, end;
+    Graph_Matrix* gm = new Graph_Matrix(vertices);
+    print_matrix();
+    std::cout << std::endl;
+    for (int u = 0; u < vertices; u++) {
+        for (int v = u; v < vertices; v++) {
+            if (adj_matrix[u][v] >= adj_matrix[v][u])
+                gm->add_edge(u, v, adj_matrix[v][u]);
+            else
+                gm->add_edge(u, v, adj_matrix[u][v]);
+        }
+    }
+    gm->print_matrix();
+    
+    int* parent = new int[vertices]; 
+    int* key = new int[vertices];    
+    bool* mst_set = new bool[vertices]; 
 
-    for (int i = 0; i < vertices; i++) 
-        key[i] = INT_MAX, mst_set[i] = false;
     
-    key[0] = 0;
-    parent[0] = -1;
+    for (int i = 0; i < vertices; i++) {
+        key[i] = INT_MAX; 
+        mst_set[i] = false;
+    }
+
+    key[0] = 0;     
+    parent[0] = -1; 
+
     
-    for (int i = 0; i < vertices - 1; i++) {
+    for (int count = 0; count < vertices - 1; count++) {
         int u = min_key(key, mst_set, vertices);
         mst_set[u] = true;
         for (int v = 0; v < vertices; v++) {
-            if (adj_matrix[u][v] != INT_MAX && !mst_set[v] && adj_matrix[u][v] < key[v])
-                parent[v] = u, key[v] = adj_matrix[u][v];
+            if (gm->get_weight(u,v) && !mst_set[v] && gm->get_weight(u,v) < key[v]){
+                parent[v] = u; 
+                key[v] = gm->get_weight(u,v);
+            }
         }
     }
-    
 
-    print_mst(parent, vertices, adj_matrix);
+    print_mst(parent, vertices, key);
 
-    delete [] parent;
-    delete [] key;
-    delete [] mst_set;       
+    delete[] parent;
+    delete[] key;
+    delete[] mst_set;
 }
 
 /**
@@ -172,8 +195,9 @@ void Graph_Matrix::kruskla_mst() const {
 
     // Prints the result of kruskal's mst algorithm
     std::cout << "Following are the edges n the constructed MST:\n";
+    std::cout << "Edge \t Weight\n";
     for (int i = 0; i < e; i++)
-       std::cout << result[i].src << " -- " << result[i].dest << " == " << result[i].weight << "\n"; 
+       std::cout << result[i].src << " -> " << result[i].dest << " \t " << result[i].weight << "\n"; 
     delete [] edges;
     delete [] result;
 }
@@ -278,6 +302,13 @@ bool Graph_Matrix::has_edge(int u, int v) const {
 int Graph_Matrix::get_weight(int u, int v) const {
     return adj_matrix[u][v];
 }
+int** Graph_Matrix::get_adj_matrix() const {
+    return adj_matrix;
+}
+bool Graph_Matrix::get_smaller_edge(int u, int v) const {
+    return adj_matrix[u][v] >= adj_matrix[v][u];
+}
+
 
 
 

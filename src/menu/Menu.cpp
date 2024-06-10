@@ -142,7 +142,7 @@ void Menu::mst_menu_controller()  {
                 std::cout << "Matrix represenatation:\n";
                 graph_matrix->prim_mst();
                 std::cout << "List represenatation:\n";
-                graph_list->prim_mst();
+                copy_graph_list->prim_mst();
                 wait_for_button_press();
                 break;
             }
@@ -221,7 +221,7 @@ void Menu::sp_menu_controller() {
 
                 do {
                     std::cout << "Dijkstra's algorithm for both representations:\n";
-                    std::cout << "Input the source vertex: ";
+                    std::cout << "Input the source vertex\n";
                     src_vertex = get_input(); 
                     is_src_vertex_valid= check_if_vertex_exist(src_vertex);
                     if (!is_src_vertex_valid)
@@ -243,6 +243,7 @@ void Menu::sp_menu_controller() {
                 do {
                     std::cout << "Ford Bellman's algorithm for both representations:\n";
                     std::cout << "Input the source vertex: ";
+                    src_vertex = get_input();
                     is_src_vertex_valid = check_if_vertex_exist(src_vertex);
                     if (!is_src_vertex_valid)
                         clear_terminal();
@@ -311,7 +312,7 @@ void Menu::generate_random_matrix_grpah() {
     for (int i = 1; i < vertex_number; ++i) {
         int u = get_random_int(0, i -1);
         int v = i; 
-        int weight = get_random_int(1, 10); 
+        int weight = get_random_int(1, 9); 
         graph_matrix->add_edge(u, v, weight);
         uf.union_sets(u, v);
     }
@@ -337,12 +338,27 @@ void Menu::generate_random_matrix_grpah() {
 */
 void Menu::copy_graph_matrix_to_graph_list() {
     graph_list = new Graph_List(vertex_number);
+    copy_graph_list = new Graph_List(vertex_number);
 
     for (int u = 0; u < vertex_number; u++) {
         for (int v = 0; v < vertex_number; v++) {
             if (graph_matrix->has_edge(u,v)) {
                 int weight = graph_matrix->get_weight(u, v);
                 graph_list->add_edge(u,v, weight, true);
+            }
+        }
+    }
+    for (int u = 0; u < vertex_number; u++) {
+        for (int v = u; v < vertex_number; v++) {
+            if(graph_matrix->has_edge(u,v)) {
+                if (graph_matrix->get_smaller_edge(u,v)) {
+                    int weight =  graph_matrix->get_weight(v,u);
+                    copy_graph_list->add_edge(v, u, weight, false);
+                }
+                else {
+                    int weight =  graph_matrix->get_weight(u, v);
+                    copy_graph_list->add_edge(u, v, weight, false);
+                }
             }
         }
     }
