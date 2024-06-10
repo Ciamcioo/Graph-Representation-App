@@ -22,6 +22,7 @@ void Menu::generate_graph_from_file_mst(std::string file_name) {
     int u, v, weight;
     while (file >> u >> v >> weight) {
         graph_matrix->add_edge(u,v, weight);
+        graph_matrix->add_edge(v,u, weight);
         graph_list->add_edge(u,v,weight,false);
     }
     file.close();
@@ -146,6 +147,7 @@ void Menu::display_mst_menu() const {
     std::cout << "3. Display matrix and list represenatation of graph\n";
     std::cout << "4. Prim's Algorithm for minimal spanning tree for botherepresenatations of graph\n";
     std::cout << "5. Kruskal's Algorithm for minimal spanning tree for both represenatation of graph\n";
+    std::cout << "6. Return to main menu\n";
 }
 
 /**
@@ -154,7 +156,7 @@ void Menu::display_mst_menu() const {
  */
 void Menu::mst_menu_controller()  {
     int user_input;
-    bool is_valid = true;
+    bool is_valid = false;
     do {
     is_valid = true;
     std::cout << "\nEnter number relate to action\n";
@@ -214,14 +216,20 @@ void Menu::mst_menu_controller()  {
                 wait_for_button_press();
                 break;
             }
+            case 6: {
+                graph_matrix = nullptr;
+                graph_list = nullptr;
+                return;
+            }
             default: {
                 std::cout << "Invalid input\n";
                 wait_for_button_press();
-                is_valid = false;
                 break;
              }
         } 
-    } while(!is_valid);
+        clear_terminal();
+        display_mst_menu();
+    } while(true);
 }
 
 /**
@@ -235,6 +243,7 @@ void Menu::display_sp_menu() const {
     std::cout << "3. Display matrix and list represenatation of graph\n";
     std::cout << "4. Dijkstra's Algorithm for the shortherst path from srouce vertex to other vertecies for both represenatations of graph\n";
     std::cout << "5. Ford-Bellman's Algorithm for the shortherst path from srouce vertex to other vertecies for both represenatation of graph\n";
+    std::cout << "6. Return to main menu\n";
 }
 
 /**
@@ -242,7 +251,7 @@ void Menu::display_sp_menu() const {
  * Additionaly function handles the correctness of data and if all the necesary varialbe are initalized in the program.
  */
 void Menu::sp_menu_controller() {
-    bool is_valid = true;
+   bool is_valid = true;
    int user_input;
    do {
         is_valid = true;
@@ -324,14 +333,20 @@ void Menu::sp_menu_controller() {
                 wait_for_button_press();
                 break;
             }
-            default: {
-                std::cout << "Invalid input" << std::endl;
-                wait_for_button_press();
-                is_valid = false;
-                break;
+            case 6: {
+                graph_matrix = nullptr;
+                graph_list = nullptr;
+                return;
             }
-       } 
-   }while(!is_valid);
+            default: {
+                std::cout << "Invalid input\n";
+                wait_for_button_press();
+                break;
+             }
+        } 
+        clear_terminal();
+        display_sp_menu();
+   }while(true);
 }
 
 /**
